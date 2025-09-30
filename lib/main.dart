@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:imogoat/screens/auth/login.dart';
+import 'package:imogoat/screens/auth/sign.dart';
+import 'package:imogoat/screens/home/home.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +18,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         "/": (context) => const LoginPage(),
+        "/signup": (context) => const SignUpPage(),
+        "/home": (context) => const HomePage(),
       },
     );
   }
