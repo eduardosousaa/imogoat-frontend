@@ -4,7 +4,7 @@ import 'package:imogoat/models/rest_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DioCliente extends RestClient {
-  Dio dio = Dio(BaseOptions(baseUrl: 'http://localhost:5000'));
+  Dio dio = Dio(BaseOptions(baseUrl: 'http://localhost:5002'));
 
   @override
   Future<dynamic> get(String path, {Map<String, dynamic>? params}) async {

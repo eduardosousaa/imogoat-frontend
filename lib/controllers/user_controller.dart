@@ -54,12 +54,12 @@ class ControllerUser extends ChangeNotifier {
   }
 
   Future<bool> signUpUser(String path, String username, String email,
-      String password, String number, String role) async {
+      String password, String phoneNumber, String role) async {
     try {
       loading = true;
       notifyListeners();
       result = await _repository.signUpUser(
-          path, username, email, password, number, role);
+          path, username, email, password, phoneNumber, role);
     } finally {
       loading = false;
       notifyListeners();
