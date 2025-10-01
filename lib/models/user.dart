@@ -3,7 +3,7 @@ class User {
   String username;
   String email;
   String? password;
-  String number;
+  String phoneNumber;
   String? role;
 
   User({
@@ -11,7 +11,7 @@ class User {
     required this.username,
     required this.email,
     this.password,
-    required this.number,
+    required this.phoneNumber,
     this.role,
   });
   
@@ -21,7 +21,7 @@ class User {
       username: map['username'] ?? 'Não informado', 
       email: map['email'] ?? 'Não informado', 
       password: map['password'] ?? 'Não informado', 
-      number: map['number'] ?? 'Não informado', 
+      phoneNumber: map['phoneNumber'] ?? 'Não informado', 
       role: map['role'] ?? 'user');
   }
 
@@ -29,7 +29,7 @@ class User {
     return {
       'username': username,
       'email': email,
-      'number': number
+      'phoneNumber': phoneNumber,
     };
   }
 }

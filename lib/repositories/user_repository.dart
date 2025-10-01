@@ -41,14 +41,14 @@ class UserRepository {
     }
   }
 
-  Future<bool> signUpUser(String path, String username, String email, String password, String number, String role) async {
+  Future<bool> signUpUser(String path, String username, String email, String password, String phoneNumber, String role) async {
 
     try {
       await _rest.post(path, {
         "username": username,
         "email": email,
         "password": password,
-        "number": number,
+        "phoneNumber": phoneNumber,
         "role": role,
       },);
 
@@ -61,7 +61,7 @@ class UserRepository {
 
   Future<void> deleteUser(String id) async {
     try {
-      await _rest.delete('http://localhost:5000/delete-user', id);
+      await _rest.delete('http://localhost:5002/delete-user', id);
     } catch (error) {
       print('Erro ao deletar usuário: $error');
       rethrow;
@@ -78,3 +78,4 @@ class UserRepository {
     }
   }
 }
+
