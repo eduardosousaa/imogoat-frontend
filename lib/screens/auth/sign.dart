@@ -7,6 +7,8 @@ import 'package:imogoat/controllers/user_controller.dart';
 import 'package:imogoat/models/rest_client.dart';
 import 'package:imogoat/repositories/user_repository.dart';
 import 'package:imogoat/styles/color_constants.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -18,7 +20,8 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final httpCliente = GetIt.I.get<RestClient>();
   final _formKey = GlobalKey<FormState>();
-  final controller = ControllerUser(userRepository: UserRepository(restClient: GetIt.I.get<RestClient>()));
+  final controller = ControllerUser(
+      userRepository: UserRepository(restClient: GetIt.I.get<RestClient>()));
   final _name = TextEditingController();
   final _email = TextEditingController();
   final _number = TextEditingController();
@@ -27,7 +30,14 @@ class _SignUpPageState extends State<SignUpPage> {
   final _confirmPassword = TextEditingController();
   bool result = false;
 
-  Future<void> register(String username, String email, String password, String phoneNumber, String role) async {
+  final phoneMask = MaskTextInputFormatter(
+  mask: '(##) # ####-####',
+  filter: { "#": RegExp(r'[0-9]') },
+  type: MaskAutoCompletionType.lazy,
+);
+
+  Future<void> register(String username, String email, String password,
+      String phoneNumber, String role) async {
     try {
       showDialog(
         context: context,
@@ -35,7 +45,8 @@ class _SignUpPageState extends State<SignUpPage> {
           return const Loading();
         },
       );
-      result = await controller.signUpUser('/create-user', username, email, password, phoneNumber, role);
+      result = await controller.signUpUser(
+          '/create-user', username, email, password, phoneNumber, role);
       Navigator.pop(context);
       if (result) {
         _showDialog(context);
@@ -45,28 +56,30 @@ class _SignUpPageState extends State<SignUpPage> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text('Alerta',
-              style: TextStyle(
-                color: verde_black,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                fontFamily: 'Poppins',
-              )),
+                  style: TextStyle(
+                    color: verde_black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    fontFamily: 'Poppins',
+                  )),
               content: const Text('Não foi possível cadastrar seu Usuário!',
-              style: TextStyle(
-                color: verde_medio,
-                fontWeight: FontWeight.normal,
-                fontSize: 16,
-                fontFamily: 'Poppins',
-              )),
-              actions: [
-                TextButton(
-                  child: const Text('OK',
                   style: TextStyle(
                     color: verde_medio,
-                    fontWeight: FontWeight.bold,
-                    // fontSize: 22,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 16,
                     fontFamily: 'Poppins',
-                  ),),
+                  )),
+              actions: [
+                TextButton(
+                  child: const Text(
+                    'OK',
+                    style: TextStyle(
+                      color: verde_medio,
+                      fontWeight: FontWeight.bold,
+                      // fontSize: 22,
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
                   onPressed: () {
                     Navigator.pop(context);
                   },
@@ -87,29 +100,30 @@ class _SignUpPageState extends State<SignUpPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Conta Criada!', 
-          style: TextStyle(
-            color: verde_black,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-            fontFamily: 'Poppins',
-          )),
+          title: const Text('Conta Criada!',
+              style: TextStyle(
+                color: verde_black,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                fontFamily: 'Poppins',
+              )),
           content: const Text('Sua conta foi criada com sucesso!',
-          style: TextStyle(
-            color: verde_medio,
-            fontWeight: FontWeight.normal,
-            fontSize: 16,
-            fontFamily: 'Poppins',
-          )),
-          actions: [
-            TextButton(
-              child: const Text('OK', 
               style: TextStyle(
                 color: verde_medio,
-                fontWeight: FontWeight.bold,
-                // fontSize: 22,
+                fontWeight: FontWeight.normal,
+                fontSize: 16,
                 fontFamily: 'Poppins',
-              ),
+              )),
+          actions: [
+            TextButton(
+              child: const Text(
+                'OK',
+                style: TextStyle(
+                  color: verde_medio,
+                  fontWeight: FontWeight.bold,
+                  // fontSize: 22,
+                  fontFamily: 'Poppins',
+                ),
               ),
               onPressed: () {
                 Navigator.pop(context);
@@ -162,8 +176,9 @@ class _SignUpPageState extends State<SignUpPage> {
                     controller: _name,
                     labelText: 'Nome completo',
                     hintText: 'Digite seu nome',
-                    validator: (value) =>
-                        value == null || value.isEmpty ? "Informe seu nome" : null,
+                    validator: (value) => value == null || value.isEmpty
+                        ? "Informe seu nome"
+                        : null,
                   ),
                   const SizedBox(height: 20),
                   TextInput(
@@ -183,10 +198,13 @@ class _SignUpPageState extends State<SignUpPage> {
                     },
                   ),
                   const SizedBox(height: 20),
-                  TextInput(controller: _number, 
-                  labelText: 'Numero', 
-                  hintText: '(00) 0 0000-0000'),
-                  
+                  TextInput(
+                    controller: _number,
+                    labelText: 'Numero',
+                    hintText: '(00) 9 9999-9999',
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [phoneMask],
+                  ),
                   const SizedBox(height: 20),
                   PasswordInput(
                     controller: _password,
@@ -219,8 +237,12 @@ class _SignUpPageState extends State<SignUpPage> {
                     child: ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          register(_name.text.trim(), _email.text.trim(),
-                              _password.text.trim(),_number.text.trim(),_role);
+                          register(
+                              _name.text.trim(),
+                              _email.text.trim(),
+                              _password.text.trim(),
+                              _number.text.trim(),
+                              _role);
                         }
                       },
                       style: ButtonStyle(
