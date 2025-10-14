@@ -3,6 +3,9 @@ import 'package:imogoat/controllers/dependency_injection.dart';
 import 'package:imogoat/screens/auth/login.dart';
 import 'package:imogoat/screens/auth/sign.dart';
 import 'package:imogoat/screens/home/home.dart';
+import 'package:imogoat/screens/home/homeAdm.dart';
+import 'package:imogoat/screens/home/homeOwner.dart';
+import 'package:imogoat/screens/home/initialPage.dart';
 
 
 void main() {
@@ -19,11 +22,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'IMO-GOAT',
-      initialRoute: '/',
+       initialRoute: '/initial',
       routes: {
         "/": (context) => const LoginPage(),
         "/signup": (context) => const SignUpPage(),
         "/home": (context) => const HomePage(),
+        "/homeOwner": (context) => const HomePageOwner(),
+        "/homeAdm": (context) => const HomePageAdm(),
+        "/initial": (context) => const Initialpage(),
       },
     );
   }
