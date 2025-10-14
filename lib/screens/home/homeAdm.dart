@@ -1,27 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:imogoat/components/navigationBarCliente.dart';
 import 'package:imogoat/components/appBarCliente.dart';
+import 'package:imogoat/components/navigationBarAdm.dart';
 import 'package:imogoat/screens/home/mainHome.dart';
-import 'package:imogoat/styles/color_constants.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class HomePageAdm extends StatefulWidget {
+  const HomePageAdm({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomePageAdm> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePageAdm> {
   int _page = 0;
   final PageController _pageController = PageController(initialPage: 0);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: background,
+        backgroundColor: const Color(0xFFF0F2F5),
         appBar: AppBarCliente(),
-        // drawer: DrawerCliente(),
-        bottomNavigationBar: CustomCurvedNavigationBar(
+        // drawer: DrawerAdm(),
+        bottomNavigationBar: CustomCurvedNavigationBarAdm(
           currentIndex: _page,
           onTap: (index) {
             _pageController.jumpToPage(index);
@@ -36,8 +35,6 @@ class _HomePageState extends State<HomePage> {
           },
           scrollDirection: Axis.horizontal,
           children: [
-            MainHomePage(),
-            MainHomePage(),
             MainHomePage(),
             MainHomePage(),
           ],
