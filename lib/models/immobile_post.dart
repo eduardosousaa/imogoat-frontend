@@ -9,9 +9,9 @@ class ImmobilePost {
   final double? value;
   final int? numberOfBedrooms;
   final int? numberOfBathrooms;
-  final bool? garagem;
+  final bool? garage;
   final String? description;
-  final int? proprietaryId;
+  final int? ownerId;
 
   ImmobilePost({
     this.name,
@@ -24,9 +24,9 @@ class ImmobilePost {
     this.value,
     this.numberOfBedrooms,
     this.numberOfBathrooms,
-    this.garagem,
+    this.garage,
     this.description,
-    this.proprietaryId,
+    this.ownerId,
   });
 
   factory ImmobilePost.fromMap(Map<String, dynamic> map) {
@@ -41,9 +41,9 @@ class ImmobilePost {
       value: map['value'],
       numberOfBedrooms: map['numberOfBedrooms'],
       numberOfBathrooms: map['numberOfBathrooms'],
-      garagem: map['garagem'],
+      garage: map['garage'],
       description: map['description'],
-      proprietaryId: map['proprietaryId'],
+      ownerId: map['ownerId'],
     );
   }
 
@@ -59,9 +59,9 @@ class ImmobilePost {
       'value': value,
       'numberOfBedrooms': numberOfBedrooms,
       'numberOfBathrooms': numberOfBathrooms,
-      'garagem': garagem,
+      'garage': garage,
       'description': description,
-      'proprietaryId': proprietaryId,
+      'ownerId': ownerId,
     };
   }
 }

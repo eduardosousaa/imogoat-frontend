@@ -10,9 +10,9 @@ class Immobile {
   double value;
   int numberOfBedrooms;
   int numberOfBathrooms;
-  bool garagem;
+  bool garage;
   String description;
-  int proprietaryId;
+  int ownerId;
   List<ImmobileImage> images;
 
   Immobile({
@@ -27,13 +27,12 @@ class Immobile {
     required this.value,
     required this.numberOfBedrooms,
     required this.numberOfBathrooms,
-    required this.garagem,
+    required this.garage,
     required this.description,
-    required this.proprietaryId,
+    required this.ownerId,
     required this.images,
   });
 
-  // Método para converter um Map em uma instância de Immobile
   factory Immobile.fromMap(Map<String, dynamic> map) {
     return Immobile(
       id: map['id'] ?? 0, 
@@ -47,16 +46,15 @@ class Immobile {
       value: (map['value'] as num?)?.toDouble() ?? 0.0,
       numberOfBedrooms: map['numberOfBedrooms'] ?? 0,
       numberOfBathrooms: map['numberOfBathrooms'] ?? 0,
-      garagem: map['garagem'] ?? false,
+      garage: map['garage'] ?? false,
       description: map['description'] ?? 'Descrição não disponível',
-      proprietaryId: map['proprietaryId'] ?? 0,
+      ownerId: map['ownerId'] ?? 0,
       images: map['images'] != null
           ? List<ImmobileImage>.from(map['images'].map<ImmobileImage>((image) => ImmobileImage.fromMap(image)))
           : [],
     );
   }
 
-  // Método toMap (opcional) para converter uma instância de Immobile em um Map
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -70,9 +68,9 @@ class Immobile {
       'value': value,
       'numberOfBedrooms': numberOfBedrooms,
       'numberOfBathrooms': numberOfBathrooms,
-      'garagem': garagem,
+      'garage': garage,
       'description': description,
-      'proprietaryId': proprietaryId,
+      'ownerId': ownerId,
       'images': images.map((image) => image.toMap()).toList(),
     };
   }
@@ -88,7 +86,6 @@ class ImmobileImage {
     required this.url,
   });
 
-  // Método para converter um Map em uma instância de ImmobileImage
   factory ImmobileImage.fromMap(Map<String, dynamic> map) {
     return ImmobileImage(
       id: map['id'] ?? 0,
@@ -96,7 +93,6 @@ class ImmobileImage {
     );
   }
 
-  // Método toMap (opcional) para converter uma instância de ImmobileImage em um Map
   Map<String, dynamic> toMap() {
     return {
       'id': id,

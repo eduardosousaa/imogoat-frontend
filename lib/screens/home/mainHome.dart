@@ -7,6 +7,7 @@ import 'package:imogoat/controllers/immobile_controller.dart';
 import 'package:imogoat/models/immobile.dart';
 import 'package:imogoat/models/rest_client.dart';
 import 'package:imogoat/repositories/immobile_repository.dart';
+import 'package:imogoat/screens/user/immobileDetailPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:imogoat/styles/color_constants.dart';
 
@@ -21,7 +22,6 @@ class _MainHomePageState extends State<MainHomePage> {
   final controller = ControllerImmobile(
       immobileRepository:
           ImmobileRepository(restClient: GetIt.I.get<RestClient>()));
-
 
   bool _isLoading = true;
   List<Immobile> filteredImmobiles = [];
@@ -78,7 +78,6 @@ class _MainHomePageState extends State<MainHomePage> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     return _isLoading
@@ -91,7 +90,6 @@ class _MainHomePageState extends State<MainHomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Conteúdo da página
                 Stack(
                   children: [
                     Positioned.fill(
@@ -151,8 +149,7 @@ class _MainHomePageState extends State<MainHomePage> {
                                       SubmitButtonHome(
                                           texto: 'AP',
                                           onPressed: () {
-                                            _searchImmobilesByType(
-                                                'apartment');
+                                            _searchImmobilesByType('apartment');
                                           }),
                                       const SizedBox(width: 2.5),
                                       SubmitButtonHome(
@@ -164,7 +161,8 @@ class _MainHomePageState extends State<MainHomePage> {
                                       SubmitButtonHome(
                                           texto: 'Quitinete',
                                           onPressed: () {
-                                            _searchImmobilesByType('studioApartment');
+                                            _searchImmobilesByType(
+                                                'studioApartment');
                                           }),
                                       const SizedBox(width: 2.5),
                                     ],
@@ -241,13 +239,11 @@ class _MainHomePageState extends State<MainHomePage> {
                                     MediaQuery.of(context).orientation ==
                                         Orientation.landscape;
 
-                                // Definindo o número de colunas dinamicamente
                                 int crossAxisCount = isLandscape
                                     ? (constraints.maxWidth ~/
-                                        250) // Calcula quantas colunas cabem de 250px cada
-                                    : 2; // Modo retrato mantém 2 colunas
+                                        250)
+                                    : 2;
 
-                                // Ajustando o aspecto dos cards dinamicamente
                                 double aspectRatio = isLandscape ? 1.2 : 1;
 
                                 return GridView.builder(
@@ -265,7 +261,14 @@ class _MainHomePageState extends State<MainHomePage> {
                                     final immobile = filteredImmobiles[index];
                                     return GestureDetector(
                                       onTap: () {
-
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                ImmobileDetailPage(
+                                                    immobile: immobile),
+                                          ),
+                                        );
                                       },
                                       child: Card(
                                         color: Colors.white,
@@ -313,17 +316,14 @@ class _MainHomePageState extends State<MainHomePage> {
                                                   const SizedBox(width: 8),
                                                   IconButton(
                                                     onPressed: () {
-                                                      setState(() {
-                                                      });
+                                                      setState(() {});
                                                       final immobileId =
                                                           controller
                                                               .immobile[index]
                                                               .id;
                                                     },
                                                     icon: Icon(Icons.favorite,
-                                                      color: 
-                                                          Colors.grey
-                                                    ),
+                                                        color: Colors.grey),
                                                   ),
                                                 ],
                                               ),
