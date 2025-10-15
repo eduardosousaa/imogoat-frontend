@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:imogoat/components/appBarCliente.dart';
 import 'package:imogoat/components/navigationBarOwner.dart';
 import 'package:imogoat/screens/home/mainHome.dart';
+import 'package:imogoat/screens/home/test.dart';
 
 class HomePageOwner extends StatefulWidget {
   const HomePageOwner({super.key});
@@ -36,10 +37,10 @@ class _HomePageState extends State<HomePageOwner> {
           scrollDirection: Axis.horizontal,
           children: [
             MainHomePage(),
-            MainHomePage(),
-            MainHomePage(),
-            MainHomePage(),
-            MainHomePage(),
+            MyWidget(),
+            MyWidget(),
+            MyWidget(),
+            MyWidget(),
           ],
         ));
   }

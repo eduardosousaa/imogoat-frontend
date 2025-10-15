@@ -61,7 +61,7 @@ class UserRepository {
 
   Future<void> deleteUser(String id) async {
     try {
-      await _rest.delete('http://10.0.2.2:5002/delete-user', id);
+      await _rest.delete('http://192.168.1.55:5000/delete-user', id);
     } catch (error) {
       print('Erro ao deletar usuário: $error');
       rethrow;
