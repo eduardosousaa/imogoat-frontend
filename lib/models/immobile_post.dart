@@ -29,6 +29,9 @@ class ImmobilePost {
     this.ownerId,
   });
 
+  /// Cria uma instância de ImmobilePost a partir de um Map.
+  /// O map deve conter as chaves correspondentes aos atributos da classe.
+  /// Caso alguma chave não exista, o valor será `null`.
   factory ImmobilePost.fromMap(Map<String, dynamic> map) {
     return ImmobilePost(
       name: map['name'],
@@ -47,6 +50,9 @@ class ImmobilePost {
     );
   }
 
+  /// Converte a instância atual de ImmobilePost em um Map.
+  /// Retorna um mapa onde cada chave representa o nome do atributo
+  /// e o valor corresponde ao conteúdo do campo.
   Map<String, dynamic> toMap() {
     return {
       'name': name,

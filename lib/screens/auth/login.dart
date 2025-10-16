@@ -25,6 +25,14 @@ class _LoginPageState extends State<LoginPage> {
   int? id_user;
   bool result = false;
 
+  /// Realiza o processo de login do usuário.
+  ///
+  /// Envia uma requisição POST para a rota `/login` com o email e password.
+  /// Caso a autenticação seja bem-sucedida, o token e outras informações
+  /// são salvas no SharedPreferences e o usuário é redirecionado
+  /// para a rota correspondente ao seu papel (user, owner, admin).
+  ///
+  /// Em caso de falha, exibe um AlertDialog informando erro de login.
   Future login(String email, String password) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
@@ -51,6 +59,7 @@ class _LoginPageState extends State<LoginPage> {
       await sharedPreferences.setString('role', role);
       await sharedPreferences.setString('token', token);
 
+      // Redireciona conforme o papel do usuário
       if (role == 'user') {
         Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
       } else if (role == 'owner') {

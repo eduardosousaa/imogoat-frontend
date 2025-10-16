@@ -4,15 +4,21 @@ import 'package:imogoat/models/rest_client.dart';
 
 class ImmobileRepository {
   final RestClient _rest;
+
   ImmobileRepository({required RestClient restClient}) : _rest = restClient;
 
- Future<List<Immobile>> buscarImmobiles() async {
+  /// Busca todos os imóveis cadastrados no servidor.
+  /// Retorna uma lista de objetos [Immobile] convertidos a partir da resposta da API.
+  Future<List<Immobile>> buscarImmobiles() async {
     final response = await _rest.get('/immobile');
     return (response as List)
         .map<Immobile>((item) => Immobile.fromMap(item as Map<String, dynamic>))
         .toList();
   }
 
+  /// Cria um novo imóvel no servidor.
+  /// Recebe o path da rota e um objeto [ImmobilePost] com os dados do imóvel.
+  /// Retorna `true` se a operação for bem-sucedida, ou `false` em caso de erro.
   Future<bool> createImmobile(String path, ImmobilePost data) async {
     try {
       await _rest.post(path, data.toMap());
@@ -23,6 +29,9 @@ class ImmobileRepository {
     }
   }
 
+  /// Atualiza um imóvel existente no servidor.
+  /// Recebe o path da rota e os novos dados do imóvel através de um ImmobilePost.
+  /// Retorna `true` se a atualização for bem-sucedida, ou `false` caso ocorra um erro.
   Future<bool> updateImmobile(String path, ImmobilePost data) async {
     try {
       await _rest.put(path, data.toMap());
@@ -33,6 +42,8 @@ class ImmobileRepository {
     }
   }
 
+  /// Exclui um imóvel com base no seu immobileId.
+  /// Caso ocorra um erro durante a exclusão, ele será impresso no console e relançado.
   Future<void> deleteImmobile(String immobileId) async {
     try {
       await _rest.delete('http://192.168.1.55:5000/delete-immobile', immobileId);
@@ -42,6 +53,9 @@ class ImmobileRepository {
     }
   }
 
+  /// Obtém o ID do último imóvel criado no sistema.
+  /// Retorna o maior valor de `id` encontrado na resposta da API,
+  /// ou `null` caso não haja imóveis cadastrados ou ocorra um erro.
   Future<int?> getLastCreatedImmobileId() async {
     try {
       final response = await _rest.get('/immobile');
@@ -55,5 +69,4 @@ class ImmobileRepository {
     }
     return null;
   }
-
 }
