@@ -21,7 +21,6 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
         backgroundColor: background,
         appBar: AppBarCliente(),
-        // drawer: DrawerCliente(),
         bottomNavigationBar: CustomCurvedNavigationBar(
           currentIndex: _page,
           onTap: (index) {

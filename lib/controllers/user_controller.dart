@@ -101,4 +101,17 @@ class ControllerUser extends ChangeNotifier {
       return result;
     }
   }
+
+  Future<bool> updateUser(String path, String role) async {
+    try {
+      loading = true;
+      notifyListeners();
+      result = await _repository.updateUser(path, role);
+      print('Result - $result');
+    } finally {
+      loading = false;
+      notifyListeners();
+      return result;
+    }
+  }
 }

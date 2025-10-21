@@ -20,7 +20,6 @@ class _HomePageState extends State<HomePageAdm> {
     return Scaffold(
         backgroundColor: const Color(0xFFF0F2F5),
         appBar: AppBarCliente(),
-        // drawer: DrawerAdm(),
         bottomNavigationBar: CustomCurvedNavigationBarAdm(
           currentIndex: _page,
           onTap: (index) {
