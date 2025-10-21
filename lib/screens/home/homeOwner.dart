@@ -3,6 +3,7 @@ import 'package:imogoat/components/appBarCliente.dart';
 import 'package:imogoat/components/navigationBarOwner.dart';
 import 'package:imogoat/screens/home/mainHome.dart';
 import 'package:imogoat/screens/home/test.dart';
+import 'package:imogoat/screens/owner/owners_propertiesPage.dart';
 
 class HomePageOwner extends StatefulWidget {
   const HomePageOwner({super.key});
@@ -20,7 +21,6 @@ class _HomePageState extends State<HomePageOwner> {
     return Scaffold(
         backgroundColor: const Color(0xFFF0F2F5),
         appBar: AppBarCliente(),
-        // drawer: DrawerCliente(),
         bottomNavigationBar: CustomCurvedNavigationBarOwner(
           currentIndex: _page,
           onTap: (index) {
@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePageOwner> {
           children: [
             MainHomePage(),
             MyWidget(),
-            MyWidget(),
+            OwnersPropertiesPage(),
             MyWidget(),
             MyWidget(),
           ],

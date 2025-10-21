@@ -102,4 +102,19 @@ class UserRepository {
       return false;
     }
   }
+
+  Future<bool> updateUser(String path, String role) async {
+    try {
+      await _rest.put(
+        path,
+        {
+          "role": role,
+        },
+      );
+      return true;
+    } catch (error) {
+      print("Erro ao atualizar usuário: $error");
+      return false;
+    }
+  }
 }
