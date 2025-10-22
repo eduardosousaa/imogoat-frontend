@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePageAdm> {
           },
           scrollDirection: Axis.horizontal,
           children: [
-            MainHomePage(),
+            MainHome(),
             MyWidget(),
           ],
         ));
