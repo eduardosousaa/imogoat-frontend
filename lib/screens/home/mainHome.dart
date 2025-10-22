@@ -3,27 +3,33 @@ import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:imogoat/components/buttonHomeCliente.dart';
 import 'package:imogoat/components/buttonHomeSearch.dart';
+import 'package:imogoat/controllers/favorite_controller.dart';
 import 'package:imogoat/controllers/immobile_controller.dart';
 import 'package:imogoat/models/immobile.dart';
 import 'package:imogoat/models/rest_client.dart';
+import 'package:imogoat/repositories/favorite_repository.dart';
 import 'package:imogoat/repositories/immobile_repository.dart';
 import 'package:imogoat/screens/user/immobileDetailPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:imogoat/styles/color_constants.dart';
 
-class MainHomePage extends StatefulWidget {
-  const MainHomePage({super.key});
+class MainHome extends StatefulWidget {
+  const MainHome({super.key});
 
   @override
-  State<MainHomePage> createState() => _MainHomePageState();
+  State<MainHome> createState() => _MainHomeState();
 }
 
-class _MainHomePageState extends State<MainHomePage> {
+class _MainHomeState extends State<MainHome> {
   final controller = ControllerImmobile(
       immobileRepository:
           ImmobileRepository(restClient: GetIt.I.get<RestClient>()));
+  final controllerFavorite = ControllerFavorite(
+      favoriteRepository:
+          FavoriteRepository(restClient: GetIt.I.get<RestClient>()));
 
   bool _isLoading = true;
+  List<bool> isFavorited = [];
   List<Immobile> filteredImmobiles = [];
 
   Animation<double> animation = AlwaysStoppedAnimation(0.5);
@@ -36,6 +42,7 @@ class _MainHomePageState extends State<MainHomePage> {
 
   Future<void> _loadData() async {
     await _loadImmobiles();
+    await _loadFavorites();
   }
 
   Future<void> _loadImmobiles() async {
@@ -47,9 +54,30 @@ class _MainHomePageState extends State<MainHomePage> {
     });
     await controller.buscarImmobiles();
     filteredImmobiles = controller.immobile;
+    isFavorited = List.generate(controller.immobile.length, (index) => false);
     setState(() {
       _isLoading = false;
     });
+  }
+
+  Future<void> _loadFavorites() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String userId = sharedPreferences.getString('id').toString();
+    try {
+      print('Peguei o Id: $userId');
+      await controllerFavorite.buscarFavoritos(userId.toString());
+      for (var i = 0; i < controller.immobile.length; i++) {
+        final immobile = controller.immobile[i];
+        if (controllerFavorite.favorites
+            .any((fav) => fav.immobileId == immobile.id)) {
+          setState(() {
+            isFavorited[i] = true;
+          });
+        }
+      }
+    } catch (error) {
+      print('Erro ao carregar favoritos: $error');
+    }
   }
 
   Future<void> _searchImmobiles() async {
@@ -73,9 +101,49 @@ class _MainHomePageState extends State<MainHomePage> {
     filteredImmobiles =
         controller.immobile.where((immobile) => immobile.type == type).toList();
 
+    isFavorited = List.generate(filteredImmobiles.length, (index) => false);
+
     setState(() {
       _isLoading = false;
     });
+  }
+
+  Future<void> favorite(String immobileId) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String userId = sharedPreferences.getString('id').toString();
+    try {
+      await controllerFavorite.favoritarImmobile(
+          '/create-favorites', int.parse(userId), int.parse(immobileId));
+    } catch (error) {
+      print('Erro ao favoritar o imóvel: $error');
+    }
+  }
+
+  Future<void> removeFavorite(String immobileId) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String userId = sharedPreferences.getString('id').toString();
+
+    try {
+      await controllerFavorite.buscarFavoritos(userId);
+
+      int? favoriteId;
+
+      for (var fav in controllerFavorite.favorites) {
+        if (fav.immobileId.toString() == immobileId) {
+          favoriteId = fav.id;
+          break;
+        }
+      }
+
+      if (favoriteId != null) {
+        await controllerFavorite.deleteFavorite(favoriteId.toString());
+        print('Favorito removido com sucesso!');
+      } else {
+        print('Nenhum favorito encontrado para este imóvel.');
+      }
+    } catch (e) {
+      print('Erro ao remover o favorito: $e');
+    }
   }
 
   @override
@@ -90,6 +158,7 @@ class _MainHomePageState extends State<MainHomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                // Conteúdo da página
                 Stack(
                   children: [
                     Positioned.fill(
@@ -149,20 +218,20 @@ class _MainHomePageState extends State<MainHomePage> {
                                       SubmitButtonHome(
                                           texto: 'AP',
                                           onPressed: () {
-                                            _searchImmobilesByType('apartment');
+                                            _searchImmobilesByType(
+                                                'apartamento');
                                           }),
                                       const SizedBox(width: 2.5),
                                       SubmitButtonHome(
                                           texto: 'Casa',
                                           onPressed: () {
-                                            _searchImmobilesByType('house');
+                                            _searchImmobilesByType('casa');
                                           }),
                                       const SizedBox(width: 2.5),
                                       SubmitButtonHome(
                                           texto: 'Quitinete',
                                           onPressed: () {
-                                            _searchImmobilesByType(
-                                                'studioApartment');
+                                            _searchImmobilesByType('quitinete');
                                           }),
                                       const SizedBox(width: 2.5),
                                     ],
@@ -239,11 +308,13 @@ class _MainHomePageState extends State<MainHomePage> {
                                     MediaQuery.of(context).orientation ==
                                         Orientation.landscape;
 
+                                // Definindo o número de colunas dinamicamente
                                 int crossAxisCount = isLandscape
                                     ? (constraints.maxWidth ~/
-                                        250)
-                                    : 2;
+                                        250) // Calcula quantas colunas cabem de 250px cada
+                                    : 2; // Modo retrato mantém 2 colunas
 
+                                // Ajustando o aspecto dos cards dinamicamente
                                 double aspectRatio = isLandscape ? 1.2 : 1;
 
                                 return GridView.builder(
@@ -316,14 +387,33 @@ class _MainHomePageState extends State<MainHomePage> {
                                                   const SizedBox(width: 8),
                                                   IconButton(
                                                     onPressed: () {
-                                                      setState(() {});
+                                                      setState(() {
+                                                        isFavorited[index] =
+                                                            !isFavorited[index];
+                                                      });
                                                       final immobileId =
                                                           controller
                                                               .immobile[index]
                                                               .id;
+
+                                                      if (isFavorited[index]) {
+                                                        favorite(immobileId
+                                                            .toString());
+                                                      } else {
+                                                        removeFavorite(
+                                                            immobileId
+                                                                .toString());
+                                                      }
                                                     },
-                                                    icon: Icon(Icons.favorite,
-                                                        color: Colors.grey),
+                                                    icon: Icon(
+                                                      isFavorited[index]
+                                                          ? Icons.favorite
+                                                          : Icons
+                                                              .favorite_border,
+                                                      color: isFavorited[index]
+                                                          ? Colors.red
+                                                          : Colors.grey,
+                                                    ),
                                                   ),
                                                 ],
                                               ),

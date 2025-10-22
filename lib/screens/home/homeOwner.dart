@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePageOwner> {
           },
           scrollDirection: Axis.horizontal,
           children: [
-            MainHomePage(),
+            MainHome(),
             MyWidget(),
             OwnersPropertiesPage(),
             MyWidget(),

@@ -3,6 +3,9 @@ import 'package:imogoat/components/navigationBarCliente.dart';
 import 'package:imogoat/components/appBarCliente.dart';
 import 'package:imogoat/screens/home/mainHome.dart';
 import 'package:imogoat/screens/home/test.dart';
+import 'package:imogoat/screens/user/campaignPage.dart';
+import 'package:imogoat/screens/user/contactsPage.dart';
+import 'package:imogoat/screens/user/favoritePage.dart';
 import 'package:imogoat/styles/color_constants.dart';
 
 class HomePage extends StatefulWidget {
@@ -36,10 +39,10 @@ class _HomePageState extends State<HomePage> {
           },
           scrollDirection: Axis.horizontal,
           children: [
-            MainHomePage(),
-            MyWidget(),
-            MyWidget(),
-            MyWidget(),
+            MainHome(),
+            FavoritePage(),
+            CampaignPage(),
+            ContactsPage(),
           ],
         ));
   }
