@@ -57,11 +57,11 @@ class FavoriteRepository {
   /// @throws Exceção se houver falha na comunicação com o [RestClient].
   Future<void> deleteFavorite(String favoriteId) async {
     try {
-      // Nota: O endpoint está fixo no código (https://192.168.1.55:5000/delete-favorites).
+      // Nota: O endpoint está fixo no código ('http://192.168.1.55:5000/delete-favorites').
       // Em produção, este endpoint poderia ser passado como parâmetro ou configurado
       // no RestClient, dependendo da sua arquitetura.
       await _rest.delete(
-          'https://192.168.1.55:5000/delete-favorites', favoriteId);
+          'http://192.168.1.55:5000/delete-favorites', favoriteId);
     } catch (e) {
       print('Erro ao remover favorito: $e');
       // É importante usar 'rethrow' para permitir que o Controller (quem chamou)

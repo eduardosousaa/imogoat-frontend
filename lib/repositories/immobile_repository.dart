@@ -46,7 +46,7 @@ class ImmobileRepository {
   /// Caso ocorra um erro durante a exclusão, ele será impresso no console e relançado.
   Future<void> deleteImmobile(String immobileId) async {
     try {
-      await _rest.delete('http://192.168.1.55:5000/delete-immobile', immobileId);
+      await _rest.delete('http://172.31.240.1:5000/delete-immobile', immobileId);
     } catch (error) {
       print('Erro ao deletar imóvel: $error');
       rethrow;

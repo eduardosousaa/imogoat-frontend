@@ -102,6 +102,8 @@ class ControllerUser extends ChangeNotifier {
     }
   }
 
+  /// Atualiza o papel ([role]) de um usuário.
+  /// Retorna `true` se a atualização for bem-sucedida.
   Future<bool> updateUser(String path, String role) async {
     try {
       loading = true;
