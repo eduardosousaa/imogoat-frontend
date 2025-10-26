@@ -17,6 +17,15 @@ class CampaignPage extends StatefulWidget {
 class _CampaignPageState extends State<CampaignPage> {
   final controller = ControllerUser(userRepository: UserRepository(restClient: GetIt.I.get<RestClient>()));
 
+  /// Atualiza o papel (role) do usuário logado para 'owner' (proprietário)
+  /// e navega para a primeira etapa de criação de imóvel.
+  ///
+  /// O fluxo de operação é:
+  /// 1. Obtém o ID do usuário ([userId]) salvo nas [SharedPreferences].
+  /// 2. Chama [controller.updateUser] para enviar a requisição de alteração do papel
+  ///    para 'owner' na API.
+  /// 3. Em caso de sucesso, navega para a [StapeOneCreateImmobilePage].
+  /// 4. Em caso de erro, o erro é impresso no console.
   Future<void> _updateUserType() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String userId = sharedPreferences.getString('id').toString();

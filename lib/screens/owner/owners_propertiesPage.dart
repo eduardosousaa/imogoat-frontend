@@ -87,6 +87,14 @@ class _OwnersPropertiesPageState extends State<OwnersPropertiesPage> {
     }
   }
 
+  /// Carrega a lista de imóveis do usuário logado.
+  ///
+  /// 1. Obtém o ID do proprietário (proprietarioId) salvo nas [SharedPreferences].
+  /// 2. Chama o método [controller.buscarImmobiles()] para buscar todos os imóveis.
+  /// 3. Filtra a lista ([controller.immobile]) para incluir apenas os imóveis
+  ///    cujo [immobile.ownerId] corresponde ao [proprietaryId].
+  /// 4. Atualiza o estado (`isLoading = false`) para indicar que o carregamento
+  ///    foi concluído.
   Future<void> _loadImmobiles() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String proprietaryId = sharedPreferences.getString('id').toString();
@@ -102,6 +110,18 @@ class _OwnersPropertiesPageState extends State<OwnersPropertiesPage> {
     });
   }
 
+  /// Remove um imóvel com base no seu ID e atualiza a lista de imóveis.
+  ///
+  /// Em caso de sucesso:
+  /// 1. Chama [controller.deleteImmobile] para remover o imóvel.
+  /// 2. Recarrega a lista de imóveis chamando [_loadImmobiles].
+  /// 3. Exibe uma [SnackBar] de sucesso.
+  ///
+  /// Em caso de erro:
+  /// 1. Captura e imprime o erro no console.
+  /// 2. Exibe uma [SnackBar] de erro.
+  ///
+  /// @param immobileId O identificador (ID) único do imóvel a ser removido.
   Future<void> removeImmobile(String immobileId) async {
     try {
       await controller.deleteImmobile(immobileId);

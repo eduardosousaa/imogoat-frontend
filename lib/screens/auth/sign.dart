@@ -9,7 +9,6 @@ import 'package:imogoat/repositories/user_repository.dart';
 import 'package:imogoat/styles/color_constants.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
-
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
 
@@ -31,11 +30,28 @@ class _SignUpPageState extends State<SignUpPage> {
   bool result = false;
 
   final phoneMask = MaskTextInputFormatter(
-  mask: '(##) # ####-####',
-  filter: { "#": RegExp(r'[0-9]') },
-  type: MaskAutoCompletionType.lazy,
-);
+    mask: '(##) # ####-####',
+    filter: {"#": RegExp(r'[0-9]')},
+    type: MaskAutoCompletionType.lazy,
+  );
 
+  /// Realiza o processo de cadastro de um novo usuário na aplicação.
+  ///
+  /// O processo inclui:
+  /// 1. Exibir um diálogo de carregamento ([Loading]).
+  /// 2. Chamar [controller.signUpUser] para enviar os dados de registro para a API.
+  /// 3. Fechar o diálogo de carregamento.
+  /// 4. Se o resultado for sucesso (`true`), exibe um diálogo de sucesso ([_showDialog]).
+  /// 5. Se o resultado for falha (`false`), exibe um [AlertDialog] com a mensagem de erro.
+  /// 6. Em caso de exceção, fecha o diálogo de carregamento e imprime o erro no console.
+  ///
+  /// Note que a variável `context` é exigida no escopo desta função para interagir com a UI.
+  ///
+  /// @param username O nome de usuário a ser registrado.
+  /// @param email O endereço de e-mail do usuário.
+  /// @param password A senha escolhida pelo usuário.
+  /// @param phoneNumber O número de telefone do usuário.
+  /// @param role O papel ou tipo de usuário (ex: 'proprietário', 'corretor').
   Future<void> register(String username, String email, String password,
       String phoneNumber, String role) async {
     try {

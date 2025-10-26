@@ -43,6 +43,15 @@ class _ImmobileDetailPageState extends State<ImmobileDetailPage> {
     'commercialPoint': 'Ponto Comercial',
   };
 
+  /// Carrega o papel (role) e o ID do usuário logado a partir do armazenamento local
+  /// ([SharedPreferences]) e atualiza o estado do widget.
+  ///
+  /// O fluxo de operação é:
+  /// 1. Obtém o papel ([storedRole]) e o ID ([proprietaryId]) do usuário salvos nas [SharedPreferences].
+  /// 2. Imprime os valores no console para fins de depuração.
+  /// 3. Atualiza o estado do widget usando [setState], garantindo que:
+  ///    - [role] receba [storedRole] (ou uma string vazia como fallback).
+  ///    - [id] receba [proprietaryId] convertido para [int] (ou 0 como fallback).
   Future<void> getRole() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? storedRole = sharedPreferences.getString('role');
