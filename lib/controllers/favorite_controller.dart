@@ -1,21 +1,11 @@
 import 'package:imogoat/models/favorite.dart';
 import 'package:imogoat/repositories/favorite_repository.dart';
 
-/// Uma classe de controlador responsável por gerenciar a lógica de negócios
-/// relacionada aos imóveis favoritos do usuário.
-///
-/// Ela atua como um intermediário entre a UI e o [FavoriteRepository] para
-/// operações como adicionar, listar e remover favoritos.
 class ControllerFavorite {
-  /// O repositório responsável pela comunicação com a fonte de dados (ex: API).
   final FavoriteRepository favoriteRepository;
-  
-  /// Lista privada que armazena os imóveis favoritos buscados.
   var _favoriteImmobiles = <Favorite>[];
 
-  /// Construtor que exige uma instância de [favoriteRepository].
-  ///
-  /// @param favoriteRepository A implementação do repositório de favoritos.
+
   ControllerFavorite({required this.favoriteRepository});
 
   /// Adiciona um imóvel à lista de favoritos do usuário.

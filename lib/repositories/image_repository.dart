@@ -35,7 +35,7 @@ class ImageRepository {
       String? token = _sharedPreferences.getString('token');
 
       Response response = await Dio().post(
-        'http://192.168.1.131:5000/create-image',
+        'http://192.168.1.194:5000/create-image',
         data: formData,
         options: Options(
           headers: {
