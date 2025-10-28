@@ -1,10 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get_it/get_it.dart';
+import 'package:http/http.dart' as http;
 import 'package:imogoat/components/loading.dart';
+import 'package:imogoat/controllers/feedback_controller.dart';
 import 'package:imogoat/controllers/immobile_controller.dart';
 import 'package:imogoat/models/immobile_post.dart';
 import 'package:imogoat/models/rest_client.dart';
+import 'package:imogoat/repositories/feedback_repository.dart';
 import 'package:imogoat/repositories/immobile_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:imogoat/models/immobile.dart';
@@ -30,10 +35,14 @@ class _ImmobileDetailPageState extends State<ImmobileDetailPage> {
       immobileRepository:
           ImmobileRepository(restClient: GetIt.I.get<RestClient>()));
 
+  final controllerFeedback = ControllerFeedback(
+      repository: FeedbackRepository(restClient: GetIt.I.get<RestClient>()));
+
   @override
   void initState() {
     super.initState();
     getRole();
+    controllerFeedback.fetchFeedbacksByImmobile(widget.immobile.id);
   }
 
   final Map<String, String> _typeTranslations = {
@@ -42,6 +51,168 @@ class _ImmobileDetailPageState extends State<ImmobileDetailPage> {
     'studioApartment': 'Kitnet',
     'commercialPoint': 'Ponto Comercial',
   };
+
+  Future<void> showFeedbackDialog(
+      BuildContext context, int userId, int immobileId) async {
+    final _formKey = GlobalKey<FormState>();
+    final TextEditingController commentController = TextEditingController();
+    double rating = 0;
+
+    final confirmed = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'Deixe seu Feedback',
+            style: TextStyle(
+              color: verde_medio,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              fontFamily: 'Poppins',
+            ),
+          ),
+          content: SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: TextFormField(
+                      controller: commentController,
+                      decoration: const InputDecoration(
+                        labelText: 'Comentário',
+                        border: OutlineInputBorder(),
+                      ),
+                      maxLines: 3,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Por favor, adicione um comentário.';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  StatefulBuilder(
+                    builder: (context, setState) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Avaliação:',
+                            style: TextStyle(
+                              color: verde_black,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Poppins',
+                              fontSize: 16,
+                            ),
+                          ),
+                          Slider(
+                            value: rating,
+                            onChanged: (value) =>
+                                setState(() => rating = value),
+                            divisions: 5,
+                            label: rating.toStringAsFixed(1),
+                            min: 0,
+                            max: 5,
+                            activeColor: verde_medio,
+                            inactiveColor: Colors.grey.shade300,
+                          ),
+                          Text(
+                            'Nota: ${rating.toStringAsFixed(1)}',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontFamily: 'Poppins',
+                              color: verde_black,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+              child: const Text(
+                'Cancelar',
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Poppins',
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  Navigator.pop(context, true);
+                }
+              },
+              child: const Text(
+                'Enviar',
+                style: TextStyle(
+                  color: verde_medio,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Poppins',
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed == true) {
+      await createFeedback(
+        rating,
+        commentController.text,
+        userId,
+        immobileId,
+      );
+    }
+  }
+
+  /// Cria um novo feedback (avaliação) para um imóvel e lida com o fluxo de UI.
+  ///
+  /// O processo inclui:
+  /// 1. Exibir um diálogo de carregamento ([Loading]).
+  /// 2. Chamar [controllerFeedback.createFeedback] para enviar os dados. Note que
+  ///    o parâmetro [rating] (double) é convertido para `int` antes de ser enviado.
+  /// 3. Em caso de sucesso, navega para a rota '/home' e remove todas as rotas
+  ///    anteriores (`pushNamedAndRemoveUntil`).
+  /// 4. Em caso de erro, o erro é impresso no console e o diálogo de carregamento
+  ///    é fechado (`Navigator.pop(context)`).
+  ///
+  /// @param rating A pontuação (em formato double) dada ao imóvel.
+  /// @param comment O comentário ou texto da avaliação.
+  /// @param userId O ID do usuário que está enviando o feedback.
+  /// @param immobileId O ID do imóvel que está sendo avaliado.
+  Future<void> createFeedback(
+      double rating, String comment, int userId, int immobileId) async {
+    try {
+      showDialog(context: context, builder: (context) => const Loading());
+
+      await controllerFeedback.createFeedback(
+        rating.toInt(),
+        comment,
+        userId,
+        immobileId,
+      );
+
+      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+    } catch (error) {
+      print('Erro ao criar Feedback: $error');
+      Navigator.pop(context);
+    }
+  }
 
   /// Carrega o papel (role) e o ID do usuário logado a partir do armazenamento local
   /// ([SharedPreferences]) e atualiza o estado do widget.
@@ -203,6 +374,18 @@ class _ImmobileDetailPageState extends State<ImmobileDetailPage> {
     );
   }
 
+  /// Atualiza os dados de um imóvel existente e navega para a página principal do proprietário.
+  ///
+  /// O processo inclui:
+  /// 1. Obtém o ID do imóvel a partir do widget (`widget.immobile.id`).
+  /// 2. Exibe um diálogo de carregamento ([Loading]).
+  /// 3. Chama [controller.updateImmobile] para enviar os novos dados ([data]) para a API.
+  /// 4. Em caso de sucesso, navega para a rota '/homeOwner' e remove todas as rotas
+  ///    anteriores (`pushNamedAndRemoveUntil`).
+  /// 5. Em caso de erro, o erro é impresso no console e o diálogo de carregamento
+  ///    é fechado (`Navigator.pop(context)`).
+  ///
+  /// @param data O objeto [ImmobilePost] contendo os novos dados a serem aplicados ao imóvel.
   Future<void> updateImmobile(ImmobilePost data) async {
     final String immobileId = widget.immobile.id.toString();
     try {
@@ -226,16 +409,21 @@ class _ImmobileDetailPageState extends State<ImmobileDetailPage> {
       appBar: AppBar(
         backgroundColor: verde_medio,
       ),
-      floatingActionButton: role == 'owner' && id == widget.immobile.ownerId || role == 'admin'
-          ? FloatingActionButton(
-              backgroundColor: Color(0xFFFFC107),
-              foregroundColor: Colors.white,
-              child: const Icon(Icons.edit),
-              onPressed: () {
-                _showEditDialog(context);
-              },
-            )
-          : null,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          SharedPreferences sharedPreferences =
+              await SharedPreferences.getInstance();
+          String userId = sharedPreferences.getString('id').toString();
+          if (role == 'owner' || role == 'admin') {
+            _showEditDialog(context);
+          } else {
+            showFeedbackDialog(context, int.parse(userId), widget.immobile.id);
+          }
+        },
+        backgroundColor: Color(0xFFFFC107),
+        foregroundColor: Colors.white,
+        child: const Icon(Icons.edit),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -336,7 +524,8 @@ class _ImmobileDetailPageState extends State<ImmobileDetailPage> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    _typeTranslations[widget.immobile.type] ?? widget.immobile.type, 
+                    _typeTranslations[widget.immobile.type] ??
+                        widget.immobile.type,
                     style: const TextStyle(
                       fontSize: 18,
                       color: Colors.grey,
@@ -502,7 +691,72 @@ class _ImmobileDetailPageState extends State<ImmobileDetailPage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 50),
+              const SizedBox(height: 20),
+              Text(
+                'Feedbacks:',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 10),
+              AnimatedBuilder(
+                animation: controllerFeedback,
+                builder: (context, _) {
+                  if (controllerFeedback.loading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (controllerFeedback.feedbacks.isEmpty) {
+                    return const Text(
+                      'Ainda não há feedbacks para este imóvel.',
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    );
+                  }
+
+                  return Column(
+                    children: controllerFeedback.feedbacks.map((feedback) {
+                      return Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 2,
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: List.generate(
+                                  5,
+                                  (index) => Icon(
+                                    index < feedback.rating
+                                        ? Icons.star
+                                        : Icons.star_border,
+                                    color: Colors.amber,
+                                    size: 22,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                feedback.comment,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                            ],
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  );
+                },
+              ),
+              const SizedBox(height: 100),
             ],
           ),
         ),

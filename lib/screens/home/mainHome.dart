@@ -40,11 +40,22 @@ class _MainHomeState extends State<MainHome> {
     _loadData();
   }
 
+  /// Orquestra o carregamento inicial dos dados na tela principal.
+  ///
+  /// Chama sequencialmente [_loadImmobiles] para obter todos os imóveis
+  /// e [_loadFavorites] para marcar quais deles são favoritos do usuário.
   Future<void> _loadData() async {
     await _loadImmobiles();
     await _loadFavorites();
   }
 
+  /// Busca a lista completa de imóveis e inicializa o estado de carregamento.
+  ///
+  /// 1. Define [_isLoading] como `true`.
+  /// 2. Chama [controller.buscarImmobiles()] para buscar os dados.
+  /// 3. Atualiza [filteredImmobiles] com a lista completa.
+  /// 4. Inicializa [isFavorited] com `false` para todos os itens.
+  /// 5. Define [_isLoading] como `false`.
   Future<void> _loadImmobiles() async {
     if (filteredImmobiles.isEmpty && !_isLoading) {
       return;
@@ -60,6 +71,13 @@ class _MainHomeState extends State<MainHome> {
     });
   }
 
+  /// Carrega a lista de favoritos do usuário logado e atualiza a flag [isFavorited]
+  /// para os imóveis exibidos.
+  ///
+  /// 1. Obtém o ID do usuário ([userId]) nas [SharedPreferences].
+  /// 2. Busca os favoritos usando [controllerFavorite.buscarFavoritos].
+  /// 3. Itera sobre a lista de imóveis e marca o índice correspondente em [isFavorited]
+  ///    como `true` se o imóvel estiver na lista de favoritos.
   Future<void> _loadFavorites() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String userId = sharedPreferences.getString('id').toString();
@@ -80,6 +98,9 @@ class _MainHomeState extends State<MainHome> {
     }
   }
 
+  /// Busca todos os imóveis novamente e os define como a lista filtrada.
+  ///
+  /// Este método é útil para resetar filtros ou após a realização de uma pesquisa genérica.
   Future<void> _searchImmobiles() async {
     setState(() {
       _isLoading = true;
@@ -91,6 +112,14 @@ class _MainHomeState extends State<MainHome> {
     });
   }
 
+  /// Filtra a lista de imóveis pelo tipo especificado e atualiza a UI.
+  ///
+  /// 1. Busca todos os imóveis.
+  /// 2. Filtra a lista ([controller.immobile]) por imóveis onde [immobile.type]
+  ///    corresponde ao [type] fornecido.
+  /// 3. Reinicializa [isFavorited] para corresponder ao tamanho da nova lista filtrada.
+  ///
+  /// @param type O tipo de imóvel a ser filtrado (ex: 'apartamento', 'casa').
   Future<void> _searchImmobilesByType(String type) async {
     setState(() {
       _isLoading = true;
@@ -108,6 +137,11 @@ class _MainHomeState extends State<MainHome> {
     });
   }
 
+  /// Adiciona um imóvel à lista de favoritos do usuário logado.
+  ///
+  /// Obtém o ID do usuário e chama o método de criação no [controllerFavorite].
+  ///
+  /// @param immobileId O ID do imóvel a ser favoritado.
   Future<void> favorite(String immobileId) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String userId = sharedPreferences.getString('id').toString();
@@ -119,6 +153,13 @@ class _MainHomeState extends State<MainHome> {
     }
   }
 
+  /// Remove um imóvel da lista de favoritos do usuário logado.
+  ///
+  /// 1. Busca a lista de favoritos do usuário.
+  /// 2. Encontra o ID do registro de favorito ([favoriteId]) correspondente ao [immobileId].
+  /// 3. Se encontrado, chama [controllerFavorite.deleteFavorite] com o [favoriteId].
+  ///
+  /// @param immobileId O ID do imóvel que deve ser removido dos favoritos.
   Future<void> removeFavorite(String immobileId) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String userId = sharedPreferences.getString('id').toString();
@@ -158,7 +199,6 @@ class _MainHomeState extends State<MainHome> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Conteúdo da página
                 Stack(
                   children: [
                     Positioned.fill(
@@ -307,14 +347,9 @@ class _MainHomeState extends State<MainHome> {
                                 final isLandscape =
                                     MediaQuery.of(context).orientation ==
                                         Orientation.landscape;
-
-                                // Definindo o número de colunas dinamicamente
                                 int crossAxisCount = isLandscape
-                                    ? (constraints.maxWidth ~/
-                                        250) // Calcula quantas colunas cabem de 250px cada
-                                    : 2; // Modo retrato mantém 2 colunas
-
-                                // Ajustando o aspecto dos cards dinamicamente
+                                    ? (constraints.maxWidth ~/ 250)
+                                    : 2;
                                 double aspectRatio = isLandscape ? 1.2 : 1;
 
                                 return GridView.builder(

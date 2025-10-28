@@ -9,6 +9,8 @@ import 'package:imogoat/screens/home/home.dart';
 import 'package:imogoat/screens/home/homeAdm.dart';
 import 'package:imogoat/screens/home/homeOwner.dart';
 import 'package:imogoat/screens/home/initialPage.dart';
+import 'package:imogoat/screens/owner/flow/step_three_immobile.dart';
+import 'package:imogoat/screens/owner/flow/step_two_immobile.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -34,6 +36,8 @@ class MyApp extends StatelessWidget {
         "/homeOwner": (context) => const HomePageOwner(),
         "/homeAdm": (context) => const HomePageAdm(),
         "/initial": (context) => const Initialpage(),
+        "/step_two": (context) => const StepTwoCreateImmobilePage(),
+        "/step_three": (context) => const StepThreeCreateImmobilePage(),
       },
     );
   }

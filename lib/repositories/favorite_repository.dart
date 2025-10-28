@@ -61,7 +61,7 @@ class FavoriteRepository {
       // Em produção, este endpoint poderia ser passado como parâmetro ou configurado
       // no RestClient, dependendo da sua arquitetura.
       await _rest.delete(
-          'http://192.168.1.55:5000/delete-favorites', favoriteId);
+          'http://192.168.1.194:5000/delete-favorites', favoriteId);
     } catch (e) {
       print('Erro ao remover favorito: $e');
       // É importante usar 'rethrow' para permitir que o Controller (quem chamou)
