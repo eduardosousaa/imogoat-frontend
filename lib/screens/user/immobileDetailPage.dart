@@ -7,8 +7,10 @@ import 'package:http/http.dart' as http;
 import 'package:imogoat/components/loading.dart';
 import 'package:imogoat/controllers/feedback_controller.dart';
 import 'package:imogoat/controllers/immobile_controller.dart';
+import 'package:imogoat/controllers/user_controller.dart';
 import 'package:imogoat/models/immobile_post.dart';
 import 'package:imogoat/models/rest_client.dart';
+import 'package:imogoat/models/user.dart';
 import 'package:imogoat/repositories/feedback_repository.dart';
 import 'package:imogoat/repositories/immobile_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,6 +18,7 @@ import 'package:imogoat/models/immobile.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:imogoat/styles/color_constants.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ImmobileDetailPage extends StatefulWidget {
   final Immobile immobile;
@@ -35,6 +38,24 @@ class _ImmobileDetailPageState extends State<ImmobileDetailPage> {
       immobileRepository:
           ImmobileRepository(restClient: GetIt.I.get<RestClient>()));
 
+  Future<String?> getOwnerPhoneNumber(int ownerId) async {
+    final controllerUser = ControllerUser(userRepository: GetIt.I.get());
+
+    await controllerUser.buscarUsers();
+
+    final owner = controllerUser.user.firstWhere(
+      (user) => user.id == ownerId,
+      orElse: () => User(
+        id: 0,
+        username: 'Desconhecido',
+        email: '',
+        phoneNumber: '',
+        role: '',
+      ),
+    );
+
+    return owner.phoneNumber.isNotEmpty ? owner.phoneNumber : null;
+  }
   final controllerFeedback = ControllerFeedback(
       repository: FeedbackRepository(restClient: GetIt.I.get<RestClient>()));
 
@@ -641,51 +662,75 @@ class _ImmobileDetailPageState extends State<ImmobileDetailPage> {
               ),
               const SizedBox(height: 20),
               SizedBox(
-                width: 365,
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.white),
-                    side: MaterialStateProperty.all(
-                      const BorderSide(
-                        color: Color.fromARGB(255, 24, 157, 130),
-                        width: 1.5,
+                  width: 365,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      final phoneNumber =
+                          await getOwnerPhoneNumber(widget.immobile.ownerId);
+
+                      if (phoneNumber == null || phoneNumber.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text(
+                                  'Número do proprietário não disponível')),
+                        );
+                        return;
+                      }
+                      final cleanNumber =
+                          phoneNumber.replaceAll(RegExp(r'[^0-9]'), '');
+                      final Uri whatsappUrl = Uri.parse(
+                          "https://wa.me/55$cleanNumber?text=${Uri.encodeComponent("Olá! Tenho interesse no imóvel ${widget.immobile.name}.")}");
+
+                      if (await canLaunchUrl(whatsappUrl)) {
+                        await launchUrl(whatsappUrl,
+                            mode: LaunchMode.externalApplication);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content:
+                                  Text('Não foi possível abrir o WhatsApp')),
+                        );
+                      }
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.white),
+                      side: MaterialStateProperty.all(
+                        const BorderSide(
+                            color: Color.fromARGB(255, 24, 157, 130),
+                            width: 1.5),
                       ),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
+                      ),
+                      overlayColor: MaterialStateProperty.resolveWith<Color?>(
+                        (states) => states.contains(MaterialState.pressed)
+                            ? const Color.fromARGB(255, 46, 60, 78)
+                            : null,
+                      ),
+                      elevation: MaterialStateProperty.all(0),
+                      minimumSize:
+                          MaterialStateProperty.all(const Size(200, 50)),
                     ),
-                    shape: MaterialStateProperty.all(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    overlayColor: MaterialStateProperty.resolveWith<Color?>(
-                      (Set<MaterialState> states) {
-                        if (states.contains(MaterialState.pressed)) {
-                          return Color.fromARGB(255, 46, 60, 78);
-                        }
-                        return null;
-                      },
-                    ),
-                    elevation: MaterialStateProperty.all(0),
-                    minimumSize: MaterialStateProperty.all(const Size(200, 50)),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      FaIcon(
-                        FontAwesomeIcons.whatsapp,
-                        color: Color.fromARGB(255, 24, 157, 130),
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Text(
-                        'Entrar em contato',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          color: Color.fromARGB(255, 24, 157, 130),
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        FaIcon(FontAwesomeIcons.whatsapp,
+                            color: Color.fromARGB(255, 24, 157, 130)),
+                        SizedBox(width: 20),
+                        Text(
+                          'Entrar em contato',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            color: Color.fromARGB(255, 24, 157, 130),
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
+                      ],
+                    ),
+                  )),
+              const SizedBox(height: 50),
                       ),
                     ],
                   ),

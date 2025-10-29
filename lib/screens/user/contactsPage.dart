@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:imogoat/styles/color_constants.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ContactsPage extends StatefulWidget {
   const ContactsPage({super.key});
@@ -22,7 +23,8 @@ class _ContactsPageState extends State<ContactsPage> {
               children: [
                 SizedBox(height: 40),
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
+                  borderRadius: BorderRadius.circular(
+                      8.0), // Para um pouco de arredondamento
                   child: Image.asset(
                     "assets/images/logo-fundo-branco-removido.png",
                     width: 250,
@@ -56,7 +58,15 @@ class _ContactsPageState extends State<ContactsPage> {
                 SizedBox(
                   width: 365,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      final Uri url = Uri.parse(
+                          "https://wa.me/558994721317?text=Olá! Obrigado por entrar em contato com o ImoGoat!");
+
+                      await launchUrl(
+                        url,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    },
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Colors.white),
                       side: MaterialStateProperty.all(
@@ -79,15 +89,13 @@ class _ContactsPageState extends State<ContactsPage> {
                         },
                       ),
                       elevation: MaterialStateProperty.all(0),
-                      minimumSize: MaterialStateProperty.all(const Size(200, 50)),
+                      minimumSize:
+                          MaterialStateProperty.all(const Size(200, 50)),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        FaIcon(
-                          FontAwesomeIcons.whatsapp,
-                          color: verde_contato
-                        ),
+                        FaIcon(FontAwesomeIcons.whatsapp, color: verde_contato),
                         SizedBox(
                           width: 20,
                         ),

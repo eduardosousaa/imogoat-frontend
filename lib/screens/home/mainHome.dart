@@ -309,13 +309,6 @@ class _MainHomeState extends State<MainHome> {
                                         ),
                                       ),
                                       const SizedBox(width: 10),
-                                      CustomButtonSearch(
-                                        text: 'Pesquisar',
-                                        onPressed: () {
-                                          _searchImmobiles();
-                                        },
-                                      ),
-                                      const SizedBox(width: 10),
                                     ],
                                   ),
                                 ],
