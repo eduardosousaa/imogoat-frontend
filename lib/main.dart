@@ -12,6 +12,8 @@ import 'package:imogoat/screens/home/initialPage.dart';
 import 'package:imogoat/screens/owner/flow/step_three_immobile.dart';
 import 'package:imogoat/screens/owner/flow/step_two_immobile.dart';
 import 'package:provider/provider.dart';
+import 'package:imogoat/screens/admin/userPage.dart';
+
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,6 +40,7 @@ class MyApp extends StatelessWidget {
         "/initial": (context) => const Initialpage(),
         "/step_two": (context) => const StepTwoCreateImmobilePage(),
         "/step_three": (context) => const StepThreeCreateImmobilePage(),
+        "/user_page": (context) => const UserPage(),
       },
     );
   }
