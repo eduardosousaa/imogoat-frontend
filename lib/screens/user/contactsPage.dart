@@ -22,7 +22,6 @@ class _ContactsPageState extends State<ContactsPage> {
             child: Column(
               children: [
                 SizedBox(height: 40),
-                // Removido Positioned.fill
                 ClipRRect(
                   borderRadius: BorderRadius.circular(
                       8.0), // Para um pouco de arredondamento

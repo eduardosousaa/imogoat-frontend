@@ -81,6 +81,17 @@ Future<void> _showDialog(BuildContext context) async {
     );
   }
 
+  /// Inicia o processo de criação de um novo imóvel e navega para a próxima etapa.
+  ///
+  /// O fluxo de operação é:
+  /// 1. Exibe um diálogo de carregamento ([Loading]) para feedback visual.
+  /// 2. Chama [controller.createImmobile] para enviar os dados do imóvel ([data])
+  ///    para a API.
+  /// 3. Em caso de sucesso, navega para a [StapeFourCreateImmobilePage],
+  ///    removendo implicitamente o diálogo de carregamento.
+  /// 4. Em caso de erro, apenas o erro é impresso no console.
+  ///
+  /// @param data O objeto [ImmobilePost] contendo todos os dados do novo imóvel a ser criado.
   Future<void> createImmobile(ImmobilePost data) async {
     try {
       showDialog(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:imogoat/components/appBarCliente.dart';
 import 'package:imogoat/components/navigationBarAdm.dart';
+import 'package:imogoat/screens/admin/mainHomeAdm.dart';
 import 'package:imogoat/screens/home/mainHome.dart';
 import 'package:imogoat/screens/home/test.dart';
 
@@ -35,7 +36,7 @@ class _HomePageState extends State<HomePageAdm> {
           },
           scrollDirection: Axis.horizontal,
           children: [
-            MainHome(),
+            MainHomeAdmPage(),
             MyWidget(),
           ],
         ));

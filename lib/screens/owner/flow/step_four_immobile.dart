@@ -31,7 +31,19 @@ class _StapeFourCreateImmobilePageState extends State<StapeFourCreateImmobilePag
   );
   final controllerImage = ControllerImage(imageRepository: ImageRepository(restClient: GetIt.I.get<RestClient>()));
 
-
+  /// Realiza o processo de upload das imagens selecionadas para o imóvel recém-criado.
+  ///
+  /// O fluxo de operação é:
+  /// 1. Busca o ID do último imóvel criado através de [controller.getLastCreatedImmobileId()].
+  /// 2. Verifica se o ID foi obtido; caso contrário, aborta e loga um erro.
+  /// 3. Exibe um diálogo de carregamento ([Loading]).
+  /// 4. Chama [controllerImage.createImage] para enviar a lista de imagens ([_selectedImages])
+  ///    e o [lastId] para o repositório.
+  /// 5. Em caso de sucesso no upload, navega para a [HomePageOwner].
+  /// 6. Em caso de erro, apenas o erro é impresso no console.
+  ///
+  /// Nota: O diálogo de carregamento não é fechado explicitamente no bloco 'try',
+  /// o que pode gerar um problema se a navegação falhar ou se o erro for capturado.
   Future<void> createImage() async {
     await controller.getLastCreatedImmobileId();
     final lastId = controller.lastCreatedImmobileId;
@@ -64,7 +76,12 @@ class _StapeFourCreateImmobilePageState extends State<StapeFourCreateImmobilePag
     }
   }
 
-
+  /// Abre a galeria ou seletor de arquivos do dispositivo para que o usuário escolha imagens.
+  ///
+  /// 1. Utiliza [_picker.pickMultiImage] para selecionar múltiplas imagens.
+  /// 2. Verifica se a seleção não é nula e se o número de imagens é de no máximo 5.
+  /// 3. Se a validação for aprovada, atualiza o estado ([_selectedImages]) com a lista de [File].
+  /// 4. Se o limite de 5 imagens for excedido, exibe uma [SnackBar] de alerta.
   Future<void> _selectImages() async {
     final List<XFile>? images = await _picker.pickMultiImage();
     if (images != null && images.length <= 5) {

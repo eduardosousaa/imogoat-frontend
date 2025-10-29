@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:imogoat/data/provider/favoriteProvider.dart';
+import 'package:get_it/get_it.dart';
+import 'package:imogoat/controllers/favorite_controller.dart';
+import 'package:imogoat/controllers/immobile_controller.dart';
+import 'package:imogoat/models/favorite.dart';
+import 'package:imogoat/models/rest_client.dart';
+import 'package:imogoat/repositories/favorite_repository.dart';
+import 'package:imogoat/repositories/immobile_repository.dart';
 import 'package:imogoat/screens/user/immobileDetailPage.dart';
 import 'package:imogoat/styles/color_constants.dart';
-import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FavoritePage extends StatefulWidget {
   @override
@@ -10,41 +16,102 @@ class FavoritePage extends StatefulWidget {
 }
 
 class _FavoritePageState extends State<FavoritePage> {
+  final controller = ControllerImmobile(
+      immobileRepository: ImmobileRepository(restClient: GetIt.I.get<RestClient>()));
+  final controllerFavorite = ControllerFavorite(
+      favoriteRepository: FavoriteRepository(restClient: GetIt.I.get<RestClient>()));
+
+  bool isLoading = true;
+  List<Favorite> favoriteImmobiles = [];
+
   @override
   void initState() {
     super.initState();
-    final favoriteProvider = Provider.of<FavoriteProvider>(context, listen: false);
-    favoriteProvider.loadFavorites();
+    _loadFavorites();
+  }
+
+  /// Carrega a lista de imóveis favoritos do usuário logado.
+  ///
+  /// 1. Define [isLoading] como `true` e atualiza o estado.
+  /// 2. Obtém o ID do usuário ([userId]) nas [SharedPreferences].
+  /// 3. Chama [controllerFavorite.buscarFavoritos] para buscar os dados.
+  /// 4. Atualiza [favoriteImmobiles] com a lista do controller e define [isLoading] como `false`.
+  /// 5. Em caso de erro, define [isLoading] como `false` e loga a falha.
+  Future<void> _loadFavorites() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String userId = sharedPreferences.getString('id').toString();
+
+    try {
+      await controllerFavorite.buscarFavoritos(userId);
+      
+      setState(() {
+        favoriteImmobiles = controllerFavorite.favorites;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      print('Erro ao carregar favoritos: $e');
+    }
+  }
+
+  /// Remove um imóvel da lista de favoritos do usuário e atualiza a UI.
+  ///
+  /// 1. Busca o ID do registro de favorito ([favoriteId]) correspondente ao [immobileId] na lista local.
+  /// 2. Se encontrado, chama [controllerFavorite.deleteFavorite] para remover no backend.
+  /// 3. Remove o item da lista [favoriteImmobiles] localmente e atualiza a UI.
+  /// 4. Em caso de erro, apenas o erro é logado.
+  ///
+  /// @param immobileId O ID do imóvel que deve ser removido dos favoritos.
+  Future<void> removeFavorite(String immobileId) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String userId = sharedPreferences.getString('id').toString();
+    
+    try {
+      int? favoriteId; 
+
+      for (var fav in controllerFavorite.favorites) {
+        if (fav.immobileId.toString() == immobileId) {
+          favoriteId = fav.id;
+          break;
+        }
+      }
+
+      if (favoriteId != null) {
+        await controllerFavorite.deleteFavorite(favoriteId.toString());
+        print('Favorito removido com sucesso!');
+        setState(() {
+          favoriteImmobiles.removeWhere((fav) => fav.immobileId.toString() == immobileId);
+        });
+      } else {
+        print('Nenhum favorito encontrado para este imóvel.');
+      }
+    } catch (e) {
+      print('Erro ao remover o favorito: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<FavoriteProvider>(
-      builder: (context, favoriteProvider, child) {
-        // Exibe o loading somente se estiver carregando e a lista estiver vazia
-        if (favoriteProvider.isloading && favoriteProvider.favorites.isEmpty) {
-          return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(
-                color: Color(0xFF265C5F),
-              ),
-            ),
-          );
-        }
-
-        return Scaffold(
-          backgroundColor: background,
-          body: favoriteProvider.favorites.isEmpty
-              ? const Center(
-                  child: Text(
-                    'Nenhum imóvel favoritado.',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red,
-                    ),
-                  ),
-                )
+    return Scaffold(
+      backgroundColor: Color(0xFFF0F2F5),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator(
+              color: const Color(0xFF265C5F),
+            ))
+          : favoriteImmobiles.isEmpty
+              ? Center(child: Text('Nenhum imóvel favoritado.', 
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.red,
+                ),
+              ))
               : SingleChildScrollView(
                   child: Center(
                     child: Column(
@@ -86,10 +153,10 @@ class _FavoritePageState extends State<FavoritePage> {
                             mainAxisSpacing: 10,
                             childAspectRatio: 1 / 1,
                           ),
-                          itemCount: favoriteProvider.favorites.length,
+                          itemCount: favoriteImmobiles.length,
                           shrinkWrap: true,
                           itemBuilder: (context, index) {
-                            final favorite = favoriteProvider.favorites[index];
+                            final favorite = favoriteImmobiles[index];
                             return GestureDetector(
                               onTap: () {
                                 Navigator.push(
@@ -132,12 +199,11 @@ class _FavoritePageState extends State<FavoritePage> {
                                             ),
                                           ),
                                           IconButton(
-                                            icon: const Icon(Icons.favorite, color: Colors.red),
-                                            onPressed: () {
-                                              print('Id para remover: ${favorite.immobile.id.toString()}');
-                                              favoriteProvider.removeFavorite(favorite.immobile.id.toString());
-                                            },
-                                          ),
+                                              icon: Icon(Icons.favorite, color: Colors.red),
+                                              onPressed: () async {
+                                                await removeFavorite(favorite.immobile.id.toString());
+                                              },
+                                            ),
                                         ],
                                       ),
                                       Row(
@@ -171,8 +237,6 @@ class _FavoritePageState extends State<FavoritePage> {
                     ),
                   ),
                 ),
-        );
-      },
     );
   }
 }

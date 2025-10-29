@@ -65,7 +65,7 @@ class _LoginPageState extends State<LoginPage> {
       } else if (role == 'owner') {
         Navigator.pushNamedAndRemoveUntil(context, '/homeOwner', (route) => false);
       } else if (role == 'admin') {
-        Navigator.pushNamedAndRemoveUntil(context, 'homeAdm', (route) => false);
+        Navigator.pushNamedAndRemoveUntil(context, '/homeAdm', (route) => false);
       }
     } catch (error) {
       Navigator.pop(context);

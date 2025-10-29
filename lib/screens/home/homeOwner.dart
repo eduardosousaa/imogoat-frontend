@@ -4,6 +4,9 @@ import 'package:imogoat/components/navigationBarOwner.dart';
 import 'package:imogoat/screens/home/mainHome.dart';
 import 'package:imogoat/screens/home/test.dart';
 import 'package:imogoat/screens/owner/owners_propertiesPage.dart';
+import 'package:imogoat/screens/user/campaignPage.dart';
+import 'package:imogoat/screens/user/contactsPage.dart';
+import 'package:imogoat/screens/user/favoritePage.dart';
 
 class HomePageOwner extends StatefulWidget {
   const HomePageOwner({super.key});
@@ -37,10 +40,10 @@ class _HomePageState extends State<HomePageOwner> {
           scrollDirection: Axis.horizontal,
           children: [
             MainHome(),
-            MyWidget(),
+            FavoritePage(),
             OwnersPropertiesPage(),
-            MyWidget(),
-            MyWidget(),
+            CampaignPage(),
+            ContactsPage(),
           ],
         ));
   }
