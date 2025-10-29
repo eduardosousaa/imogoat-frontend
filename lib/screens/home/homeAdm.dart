@@ -3,7 +3,9 @@ import 'package:imogoat/components/appBarCliente.dart';
 import 'package:imogoat/components/navigationBarAdm.dart';
 import 'package:imogoat/screens/admin/mainHomeAdm.dart';
 import 'package:imogoat/screens/home/mainHome.dart';
-import 'package:imogoat/screens/home/test.dart';
+
+
+
 
 class HomePageAdm extends StatefulWidget {
   const HomePageAdm({super.key});
@@ -37,7 +39,7 @@ class _HomePageState extends State<HomePageAdm> {
           scrollDirection: Axis.horizontal,
           children: [
             MainHomeAdmPage(),
-            MyWidget(),
+            UserPage(),
           ],
         ));
   }
