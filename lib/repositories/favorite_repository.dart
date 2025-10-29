@@ -37,10 +37,7 @@ class FavoriteRepository {
     try {
       await _rest.post(
         path,
-        {
-          'userId': userId,
-          'immobileId': immobileId
-        },
+        {'userId': userId, 'immobileId': immobileId},
       );
       return true;
     } catch (error) {
@@ -56,10 +53,12 @@ class FavoriteRepository {
   /// @param favoriteId O ID do registro de favorito a ser excluído.
   /// @throws Exceção se houver falha na comunicação com o [RestClient].
   Future<void> deleteFavorite(String favoriteId) async {
-  try {
-    await _rest.delete('https://imogoat-backend.onrender.com/delete-favorites', favoriteId);
-  } catch (e) {
-    print('Erro ao remover favorito: $e');
-    rethrow;
+    try {
+      await _rest.delete(
+          'https://imogoat-backend.onrender.com/delete-favorites', favoriteId);
+    } catch (e) {
+      print('Erro ao remover favorito: $e');
+      rethrow;
+    }
   }
 }

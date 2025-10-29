@@ -12,45 +12,73 @@ class AppBarCliente extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       elevation: 0,
-      iconTheme: IconThemeData(color: Colors.white),
+      iconTheme: const IconThemeData(color: Colors.white),
       centerTitle: true,
       backgroundColor: verde_medio,
       automaticallyImplyLeading: false,
-      actions: [
-        Image(
-          image: AssetImage("assets/images/logo_nova.png"),
-          height: 50,
+      actions: const [
+        Padding(
+          padding: EdgeInsets.only(right: 10),
+          child: Image(
+            image: AssetImage("assets/images/logo_nova.png"),
+            height: 50,
+          ),
         ),
       ],
       leading: IconButton(
-        icon: const Icon(Icons.logout, color: Colors.white), // ícone de logout
+        icon: const Icon(Icons.logout, color: Colors.white),
         onPressed: () async {
-          // Mostra o diálogo de confirmação
           final shouldLogout = await showDialog<bool>(
             context: context,
             builder: (context) => AlertDialog(
-              iconColor: Colors.black,
               backgroundColor: Colors.white,
-              surfaceTintColor: Colors.black,
-              title: const Text('Confirmação'),
-              content: const Text('Deseja realmente sair?'),
+              title: const Text(
+                'Confirmação',
+                style: TextStyle(
+                  color: verde_medio,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  fontFamily: 'Poppins',
+                ),
+              ),
+              content: const Text(
+                'Deseja realmente sair?',
+                style: TextStyle(
+                  color: verde_black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  fontFamily: 'Poppins',
+                ),
+              ),
               actions: [
                 TextButton(
-                  onPressed: () => Navigator.of(context).pop(false), // não sair
-                  child: const Text('Cancelar'),
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text(
+                    'Cancelar',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
                 ),
                 TextButton(
-                  onPressed: () =>
-                      Navigator.of(context).pop(true), // confirmar logout
-                  child: const Text('Sair'),
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text(
+                    'Sair',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
                 ),
               ],
             ),
           );
 
-          // Se confirmou, executa logout
           if (shouldLogout ?? false) {
-            logout(); // sua função de logout
+            await logout();
             Navigator.pushNamedAndRemoveUntil(
               context,
               '/',

@@ -238,7 +238,7 @@ class _MainHomeState extends State<MainHome> {
                           Center(
                             child: Container(
                               width: MediaQuery.of(context).size.width * 0.9,
-                              height: 110,
+                              height: 70,
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(8),
@@ -246,36 +246,6 @@ class _MainHomeState extends State<MainHome> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      SubmitButtonHome(
-                                          texto: 'Todos',
-                                          onPressed: () {
-                                            _loadImmobiles();
-                                          }),
-                                      const SizedBox(width: 2.5),
-                                      SubmitButtonHome(
-                                          texto: 'AP',
-                                          onPressed: () {
-                                            _searchImmobilesByType(
-                                                'apartamento');
-                                          }),
-                                      const SizedBox(width: 2.5),
-                                      SubmitButtonHome(
-                                          texto: 'Casa',
-                                          onPressed: () {
-                                            _searchImmobilesByType('casa');
-                                          }),
-                                      const SizedBox(width: 2.5),
-                                      SubmitButtonHome(
-                                          texto: 'Quitinete',
-                                          onPressed: () {
-                                            _searchImmobilesByType('quitinete');
-                                          }),
-                                      const SizedBox(width: 2.5),
-                                    ],
-                                  ),
                                   Row(
                                     children: [
                                       const SizedBox(width: 10),

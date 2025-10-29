@@ -56,6 +56,7 @@ class _ImmobileDetailPageState extends State<ImmobileDetailPage> {
 
     return owner.phoneNumber.isNotEmpty ? owner.phoneNumber : null;
   }
+  
   final controllerFeedback = ControllerFeedback(
       repository: FeedbackRepository(restClient: GetIt.I.get<RestClient>()));
 
@@ -361,7 +362,8 @@ class _ImmobileDetailPageState extends State<ImmobileDetailPage> {
                       number: int.parse(controllers['number']!.text),
                       type: controllers['type']!.text,
                       location: controllers['location']!.text,
-                      neighborhood: controllers['bairro']!.text,
+                      // CORREÇÃO: Usar a chave 'neighborhood' para o Bairro.
+                      neighborhood: controllers['neighborhood']!.text,
                       city: controllers['city']!.text,
                       reference: controllers['reference']!.text,
                       value: double.parse(controllers['value']!.text),
@@ -426,6 +428,8 @@ class _ImmobileDetailPageState extends State<ImmobileDetailPage> {
       locale: 'pt_BR',
       symbol: 'R\$',
     ).format(widget.immobile.value);
+    
+    // CORREÇÃO DE ESTRUTURA: Removendo o bloco extra e corrigindo o final do Column.
     return Scaffold(
       appBar: AppBar(
         backgroundColor: verde_medio,
@@ -482,7 +486,7 @@ class _ImmobileDetailPageState extends State<ImmobileDetailPage> {
                     )
                   : const Text('Imagem indisponível'),
               const SizedBox(height: 16),
-              SizedBox(
+              const SizedBox(
                 width: 400,
                 child: Divider(),
               ),
@@ -517,7 +521,7 @@ class _ImmobileDetailPageState extends State<ImmobileDetailPage> {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      '${formattedValue}',
+                      formattedValue,
                       style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
@@ -528,9 +532,9 @@ class _ImmobileDetailPageState extends State<ImmobileDetailPage> {
                 ),
               ),
               const SizedBox(height: 12),
-              Text(
+              const Text(
                 'Detalhes da propriedade:',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -611,9 +615,9 @@ class _ImmobileDetailPageState extends State<ImmobileDetailPage> {
                 ],
               ),
               const SizedBox(height: 12),
-              Text(
+              const Text(
                 'Localização:',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -639,9 +643,9 @@ class _ImmobileDetailPageState extends State<ImmobileDetailPage> {
                 ],
               ),
               const SizedBox(height: 12),
-              Text(
+              const Text(
                 'Descrição:',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -731,13 +735,9 @@ class _ImmobileDetailPageState extends State<ImmobileDetailPage> {
                     ),
                   )),
               const SizedBox(height: 50),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              // CORREÇÃO DE ESTRUTURA: AQUI COMEÇA O BLOCO DE FEEDBACKS CORRIGIDO.
               const SizedBox(height: 20),
-              Text(
+              const Text(
                 'Feedbacks:',
                 style: TextStyle(
                   fontSize: 20,
