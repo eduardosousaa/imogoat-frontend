@@ -23,7 +23,7 @@ class ImageRepository {
       String? token = _sharedPreferences.getString('token');
 
       Response response = await Dio().post(
-        'http://192.168.1.131:5000/create-image',
+        'https://imogoat-backend.onrender.com/create-image',
         data: formData,
         options: Options(
           headers: {

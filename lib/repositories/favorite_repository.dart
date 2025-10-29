@@ -29,7 +29,7 @@ class FavoriteRepository {
 
   Future<void> deleteFavorite(String favoriteId) async {
   try {
-    await _rest.delete('https://192.168.1.3:5002/delete-favorites', favoriteId);
+    await _rest.delete('https://imogoat-backend.onrender.com/delete-favorites', favoriteId);
   } catch (e) {
     print('Erro ao remover favorito: $e');
     rethrow;
