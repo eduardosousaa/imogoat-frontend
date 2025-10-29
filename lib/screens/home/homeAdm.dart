@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:imogoat/components/appBarCliente.dart';
 import 'package:imogoat/components/navigationBarAdm.dart';
 import 'package:imogoat/screens/admin/mainHomeAdm.dart';
+import 'package:imogoat/screens/admin/userPage.dart';
 import 'package:imogoat/screens/home/mainHome.dart';
-
-
-
 
 class HomePageAdm extends StatefulWidget {
   const HomePageAdm({super.key});

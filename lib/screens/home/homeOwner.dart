@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:imogoat/components/appBarCliente.dart';
 import 'package:imogoat/components/navigationBarOwner.dart';
 import 'package:imogoat/screens/home/mainHome.dart';
-import 'package:imogoat/screens/home/test.dart';
 import 'package:imogoat/screens/owner/owners_propertiesPage.dart';
 import 'package:imogoat/screens/user/campaignPage.dart';
 import 'package:imogoat/screens/user/contactsPage.dart';
