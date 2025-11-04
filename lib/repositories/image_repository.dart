@@ -23,7 +23,7 @@ class ImageRepository {
   Future<bool> createImage(String path, List<File> url, int immobileId) async {
     try {
       FormData formData = FormData.fromMap({
-        'img': await Future.wait(
+        'url': await Future.wait(
           url.map((image) async => await MultipartFile.fromFile(image.path)).toList(),
         ),
         'immobileId': immobileId,
