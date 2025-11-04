@@ -26,6 +26,13 @@ class _CreateImmobilePageState extends State<StapeOneCreateImmobilePage> {
   final controller = ControllerImmobile(
       immobileRepository: ImmobileRepository(restClient: GetIt.I.get<RestClient>()));
 
+  final Map<String, String> _typeMap = {
+    'apartamento': 'apartment',
+    'casa': 'house',
+    'quitinete': 'studioApartment',
+    'pontocomercial': 'commercialPoint',
+  };
+
   @override
   void dispose() {
     _name.dispose();
@@ -72,6 +79,14 @@ class _CreateImmobilePageState extends State<StapeOneCreateImmobilePage> {
     );
   }
 
+  // Função para obter o valor em inglês a partir do valor em português
+  String? _getEnglishType(String? portugueseType) {
+    if (portugueseType == null) return null;
+    final normalizedType = portugueseType.trim().toLowerCase().replaceAll(' ', '');
+    return _typeMap[normalizedType];
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -115,12 +130,15 @@ class _CreateImmobilePageState extends State<StapeOneCreateImmobilePage> {
                     return null;
                   }),
                   const SizedBox(height: 10),
-                  TextInput(controller: _type, labelText: 'Tipo do imóvel', hintText: 'Ex: apartamento/casa/quitinete', keyboardType: TextInputType.name,
+                  TextInput(controller: _type, labelText: 'Tipo do imóvel', hintText: 'Ex: apartamento/casa/quitinete/ponto comercial', keyboardType: TextInputType.name,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'O campo não pode ser vazio';
-                    } else if (!['apartamento', 'casa', 'quitinete'].contains(value.toLowerCase())) {
-                        return 'O nome do imóvel deve ser: apartamento, casa ou quitinete';
+                    }
+                    final normalizedValue = value.trim().toLowerCase().replaceAll(' ', '');
+                    
+                    if (!_typeMap.keys.contains(normalizedValue)) {
+                        return 'O nome do imóvel deve ser: apartamento, casa, quitinete ou ponto comercial';
                     }
                     return null;
                   }),
@@ -132,11 +150,21 @@ class _CreateImmobilePageState extends State<StapeOneCreateImmobilePage> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           try {
-                            immobile_post = ImmobilePost(name: _name.text.trim(), number: int.parse(_number.text.trim()), type: _type.text.trim());
-                            print('Immobile 01: ' + immobile_post.toMap().toString());
-                            Navigator.pushNamed(context, '/step_two', arguments: {
-                              "immobile_data": immobile_post
-                            });
+                            final englishType = _getEnglishType(_type.text);
+
+                            if (englishType != null) {
+                              immobile_post = ImmobilePost(
+                                name: _name.text.trim(),
+                                number: int.parse(_number.text.trim()),
+                                type: englishType,
+                              );
+                              print('Immobile 01: ' + immobile_post.toMap().toString());
+                              Navigator.pushNamed(context, '/step_two', arguments: {
+                                "immobile_data": immobile_post
+                              });
+                            } else {
+                              _showDialog(context);
+                            }
                           } catch (error) {
                             print('Erro ao processar o valor: $error');
                             _showDialog(context);
