@@ -183,14 +183,17 @@ class _SignUpPageState extends State<SignUpPage> {
                       fontFamily: 'Poppins',
                     ),
                   ),
-                  const SizedBox(height: 15),
-
-                  const SizedBox(height: 20),
-
-                  // Campos
+                  SizedBox(
+                    height: 10,
+                  ),
+                  SizedBox(
+                    width: 300,
+                    child: Divider(),
+                  ),
+                  const SizedBox(height: 30),
                   TextInput(
                     controller: _name,
-                    labelText: 'Nome completo',
+                    labelText: 'Nome',
                     hintText: 'Digite seu nome',
                     validator: (value) => value == null || value.isEmpty
                         ? "Informe seu nome"
@@ -282,17 +285,6 @@ class _SignUpPageState extends State<SignUpPage> {
                           fontSize: 18,
                         ),
                       ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 15),
-                  const Text(
-                    "Ao Criar Conta você indica que leu e concordou com os Termos de Uso",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 12,
-                      color: Color.fromARGB(255, 46, 60, 78),
                     ),
                   ),
                   const SizedBox(height: 15),

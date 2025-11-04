@@ -264,7 +264,7 @@ class _MainHomeState extends State<MainHome> {
                                             },
                                             decoration: const InputDecoration(
                                               prefixIcon: Icon(Icons.search),
-                                              labelText: 'Bairro de interese',
+                                              labelText: 'Bairro de interesse',
                                               labelStyle: TextStyle(
                                                   color: verde_black,
                                                   fontFamily: 'Poppins',

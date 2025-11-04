@@ -181,7 +181,7 @@ class _LoginPageState extends State<LoginPage> {
                         labelText: 'Senha',
                         hintText: 'Digite sua senha',
                         validator: (value) {
-                          if (value == null || value.length < 3) {
+                          if (value == null || value.length < 6) {
                             return 'A senha deve ter pelo menos 6 caracteres.';
                           }
                           return null;
