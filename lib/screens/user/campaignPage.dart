@@ -7,6 +7,11 @@ import 'package:imogoat/screens/owner/flow/step_one_immobilePage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:imogoat/styles/color_constants.dart';
 
+import '../../controllers/user_controller.dart';
+import '../../models/rest_client.dart';
+import '../../repositories/user_repository.dart';
+import '../owner/flow/step_one_immobilePage.dart';
+
 class CampaignPage extends StatefulWidget {
   const CampaignPage({super.key});
 
