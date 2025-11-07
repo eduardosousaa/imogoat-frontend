@@ -20,17 +20,17 @@ import 'package:imogoat/styles/color_constants.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class ImmobileDetailPage extends StatefulWidget {
+class ImmobileDetailPageOwner extends StatefulWidget {
   final Immobile immobile;
 
-  const ImmobileDetailPage({Key? key, required this.immobile})
+  const ImmobileDetailPageOwner({Key? key, required this.immobile})
       : super(key: key);
 
   @override
-  _ImmobileDetailPageState createState() => _ImmobileDetailPageState();
+  _ImmobileDetailPageOwnerState createState() => _ImmobileDetailPageOwnerState();
 }
 
-class _ImmobileDetailPageState extends State<ImmobileDetailPage> {
+class _ImmobileDetailPageOwnerState extends State<ImmobileDetailPageOwner> {
   String role = '';
   int id = 0;
 
@@ -56,7 +56,7 @@ class _ImmobileDetailPageState extends State<ImmobileDetailPage> {
 
     return owner.phoneNumber.isNotEmpty ? owner.phoneNumber : null;
   }
-
+  
   final controllerFeedback = ControllerFeedback(
       repository: FeedbackRepository(restClient: GetIt.I.get<RestClient>()));
 
@@ -428,42 +428,26 @@ class _ImmobileDetailPageState extends State<ImmobileDetailPage> {
       locale: 'pt_BR',
       symbol: 'R\$',
     ).format(widget.immobile.value);
-
+    
     return Scaffold(
       appBar: AppBar(
         backgroundColor: verde_medio,
       ),
-      floatingActionButton: role == 'owner'
-          ? null
-          : FloatingActionButton(
-              onPressed: () async {
-                SharedPreferences sharedPreferences =
-                    await SharedPreferences.getInstance();
-                String? userIdString = sharedPreferences.getString('id');
-                String userId = userIdString ??
-                    '0';
-                if (role == 'owner') {
-                  return;
-                }
-                if (role == 'admin') {
-                  _showEditDialog(context);
-                } else if (role == 'user') {
-                  int? userIdInt = int.tryParse(userId);
-                  if (userIdInt != null) {
-                    showFeedbackDialog(context, userIdInt, widget.immobile.id);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content:
-                              Text("Não foi possível identificar o usuário.")),
-                    );
-                  }
-                }
-              },
-              backgroundColor: Color(0xFFFFC107),
-              foregroundColor: Colors.white,
-              child: const Icon(Icons.edit),
-            ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          SharedPreferences sharedPreferences =
+              await SharedPreferences.getInstance();
+          String userId = sharedPreferences.getString('id').toString();
+          if (role == 'owner' || role == 'admin') {
+            _showEditDialog(context);
+          } else {
+            showFeedbackDialog(context, int.parse(userId), widget.immobile.id);
+          }
+        },
+        backgroundColor: Color(0xFFFFC107),
+        foregroundColor: Colors.white,
+        child: const Icon(Icons.edit),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),

@@ -6,6 +6,7 @@ import 'package:imogoat/models/immobile_post.dart';
 import 'package:imogoat/models/rest_client.dart';
 import 'package:imogoat/repositories/immobile_repository.dart';
 import 'package:imogoat/screens/owner/flow/step_one_immobilePage.dart';
+import 'package:imogoat/screens/owner/immobileDetailPageOwner.dart';
 import 'package:imogoat/screens/user/immobileDetailPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:imogoat/styles/color_constants.dart';
@@ -224,7 +225,7 @@ class _OwnersPropertiesPageState extends State<OwnersPropertiesPage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => ImmobileDetailPage(
+                                      builder: (context) => ImmobileDetailPageOwner(
                                           immobile: immobile),
                                     ),
                                   );

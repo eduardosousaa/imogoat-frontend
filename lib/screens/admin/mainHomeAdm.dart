@@ -26,7 +26,7 @@ class _MainHomeAdmPageState extends State<MainHomeAdmPage> {
   @override
   void initState() {
     super.initState();
-    _loadImmobiles();
+    _fetchAndReloadImmobiles();
   }
 
   Future<void> confirmDelete(String immobileId) async {
@@ -81,14 +81,10 @@ class _MainHomeAdmPageState extends State<MainHomeAdmPage> {
     }
   }
 
-  /// Realiza uma busca geral por imóveis, atualizando a lista filtrada com
-  /// todos os resultados do controller.
-  ///
-  /// 1. Define o estado de carregamento ([_isLoading]) como `true`.
-  /// 2. Chama [controller.buscarImmobiles()] para buscar os dados.
-  /// 3. Atualiza [filteredImmobiles] com a lista completa de [controller.immobile].
-  /// 4. Define o estado de carregamento como `false`.
-  Future<void> _searchImmobiles() async {
+  /// Realiza uma busca completa por imóveis no controller e atualiza a UI.
+  /// Esta função substitui as lógicas condicionais anteriores de _loadImmobiles 
+  /// e _searchImmobiles para garantir a atualização.
+  Future<void> _fetchAndReloadImmobiles() async {
     setState(() {
       _isLoading = true;
     });
@@ -99,41 +95,13 @@ class _MainHomeAdmPageState extends State<MainHomeAdmPage> {
     });
   }
 
-  /// Carrega a lista de imóveis somente se a lista [filteredImmobiles] estiver vazia.
-  ///
-  /// 1. Se [filteredImmobiles] estiver vazia, chama [controller.buscarImmobiles()]
-  ///    e carrega os dados em [filteredImmobiles].
-  /// 2. Se a lista já contiver dados, apenas define [_isLoading] como `false`.
-  /// 3. Atualiza o estado da UI.
-  Future<void> _loadImmobiles() async {
-    if (filteredImmobiles.isEmpty) {
-      await controller.buscarImmobiles();
-      filteredImmobiles = controller.immobile;
-      _isLoading = false;
-    } else {
-      _isLoading = false;
-    }
-    setState(() {
-      _isLoading = false;
-    });
-  }
-
   /// Remove um imóvel com base no seu ID e recarrega a lista de imóveis.
-  ///
-  /// Em caso de sucesso:
-  /// 1. Chama [controller.deleteImmobile] para remover o imóvel.
-  /// 2. Recarrega a lista de imóveis chamando [_loadImmobiles] para atualizar a UI.
-  /// 3. Exibe uma [SnackBar] de sucesso.
-  ///
-  /// Em caso de erro:
-  /// 1. Captura e imprime o erro no console.
-  /// 2. Exibe uma [SnackBar] de erro.
-  ///
-  /// @param immobileId O identificador (ID) único do imóvel a ser removido.
   Future<void> removeImmobile(String immobileId) async {
     try {
       await controller.deleteImmobile(immobileId);
-      await _loadImmobiles();
+      
+      await _fetchAndReloadImmobiles(); 
+      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Imóvel excluído com sucesso")),
       );
@@ -182,6 +150,7 @@ class _MainHomeAdmPageState extends State<MainHomeAdmPage> {
                                   onChanged: (value) {
                                     setState(() {
                                       controller.changeSearch(value);
+                                      // Atualiza a lista filtrada localmente sempre que o texto muda
                                       filteredImmobiles = controller.immobile;
                                     });
                                   },
@@ -205,7 +174,8 @@ class _MainHomeAdmPageState extends State<MainHomeAdmPage> {
                               CustomButtonSearch(
                                 text: 'Pesquisar', 
                                 onPressed: () {
-                                  _searchImmobiles();
+                                  // Força a busca completa na API ao clicar em Pesquisar
+                                  _fetchAndReloadImmobiles();
                                 }
                               ),
                             ],
